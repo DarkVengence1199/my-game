@@ -82,7 +82,7 @@ function update() {
                 interacted = true;
                 // Bookshelf interaction
                 if (obj.name === 'bookshelf') {
-                    gameState.message = "A dusty collection of books. Nothing of interest.";
+                    gameState.message = "One of the books is titled 'Secrets of the Table'.";
                 }
                 // Table interaction
                 if (obj.name === 'table') {
