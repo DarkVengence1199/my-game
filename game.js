@@ -35,7 +35,8 @@ let gameState = {
 const objects = [
     { name: 'bookshelf', x: 50, y: 300, width: 50, height: 150, color: '#8B4513' },
     { name: 'table', x: 300, y: 400, width: 200, height: 60, color: '#A0522D' },
-    { name: 'chest', x: 650, y: 150, width: 80, height: 60, color: 'gold' }
+    { name: 'chest', x: 650, y: 150, width: 80, height: 60, color: 'gold' },
+    { name: 'wall', x: 400, y: 100, width: 20, height: 300, color: 'darkred' }
 ];
 
 // --- INPUT HANDLING ---
@@ -68,10 +69,23 @@ function isColliding(rect1, rect2) {
 // This function runs every frame to update the game's logic
 function update() {
     // Move player based on which arrow keys are pressed
+    let originalX = player.x;
+    let originalY = player.y;
+
     if (keys.ArrowUp) player.y -= player.speed;
     if (keys.ArrowDown) player.y += player.speed;
     if (keys.ArrowLeft) player.x -= player.speed;
     if (keys.ArrowRight) player.x += player.speed;
+
+    // Check for collition with wall
+    for (const obj of objects) {
+        if (obj.name === 'wall' && isColliding(player, obj)){
+            // if collision, snap player location to original position
+            player.x = originalX;
+            player.y = originalY;
+            break; // Stop checking after finding one collision
+        }
+    }
 
     // Interaction logic (when spacebar is pressed)
     // --- REFACTORED INTERACTION LOGIC ---
