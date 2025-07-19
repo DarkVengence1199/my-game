@@ -74,50 +74,52 @@ function update() {
     if (keys.ArrowRight) player.x += player.speed;
 
     // Interaction logic (when spacebar is pressed)
+    // --- REFACTORED INTERACTION LOGIC ---
     if (keys.Space) {
-        let interacted = false;
-        objects.forEach(obj => {
-            // Check if player is near an object
+        let collidedObj = null;
+
+        // First, find which object we are colliding with, if any
+        for (const obj of objects) {
             if (isColliding(player, obj)) {
-                interacted = true;
-                // Bookshelf interaction
-                if (obj.name === 'bookshelf') {
+                collidedObj = obj;
+                break; // Stop checking once we find one
+            }
+        }
+
+        // Now, handle the logic based on the object we found
+        if (collidedObj) {
+            switch (collidedObj.name) {
+                case 'bookshelf':
                     gameState.message = "One of the books is titled 'Secrets of the Table'.";
-                }
-                // Table interaction
-                if (obj.name === 'table') {
+                    break;
+                case 'table':
                     if (!gameState.inventory.includes('key')) {
                         gameState.message = "You found a small, rusty key under the table!";
                         gameState.inventory.push('key');
                     } else {
                         gameState.message = "Just an empty table now.";
                     }
-                }
-                // Chest interaction
-                if (obj.name === 'chest') {
+                    break;
+                case 'chest':
                     if (gameState.isChestLocked) {
                         if (gameState.inventory.includes('key')) {
                             gameState.message = "You used the key and opened the chest! You win!";
                             gameState.isChestLocked = false;
-                            // Change chest color to show it's open
-                            obj.color = 'grey';
+                            collidedObj.color = 'grey';
                         } else {
                             gameState.message = "The chest is locked. You need a key.";
                         }
                     } else {
                         gameState.message = "The chest is empty.";
                     }
-                }
+                    break;
             }
-        });
-
-        // If space is pressed but not near anything, reset message
-        if (!interacted) {
+        } else {
+            // If we didn't collide with anything, reset the message
             gameState.message = "Find the key to open the chest.";
         }
-        
-        // Set Space to false to prevent repeated interactions from one key press
-        keys.Space = false; 
+
+        keys.Space = false; // Prevent repeated interaction
     }
 }
 
